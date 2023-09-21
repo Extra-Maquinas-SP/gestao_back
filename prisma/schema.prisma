@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuarios {
+  id       Int           @id @default(autoincrement())
+  nome     String
+  email    String        @unique
+  senha    String
+  telefone String        @unique
+  tipo     Tipo_usuarios
+  leads    Leads[]
+}
+
+model Produtos {
+  id           Int     @id @default(autoincrement())
+  produtos     String  @unique
+  categoria    String
+  preco_tabela Float
+  leads        Leads[]
+}
+
+model Clientes {
+  id         Int           @id @default(autoincrement())
+  nome       String
+  tipo       Tipo_clientes
+  documento  String
+  endereco   Enderecos     @relation(fields: [enderecoId], references: [id])
+  enderecoId Int           @unique
+  leads      Leads[]
+}
+
+model Enderecos {
+  id          Int       @id @default(autoincrement())
+  uf          String
+  municipio   String
+  bairro      String
+  rua         String
+  numero      Int
+  complemento String?
+  cliente     Clientes?
+}
+
+model Leads {
+  usuario        Usuarios?    @relation(fields: [usuarioId], references: [id])
+  usuarioId      Int          @unique
+  cliente        Clientes?    @relation(fields: [clienteId], references: [id])
+  clienteId      Int          @unique
+  produto        Produtos?    @relation(fields: [produtoId], references: [id])
+  produtoId      Int          @unique
+  observasoes    String[]
+  status         Status_leads @relation(fields: [status_leadsId], references: [id])
+  status_leadsId Int
+}
+
+model Status_leads {
+  id     Int     @id @default(autoincrement())
+  leads  Leads[]
+  motivo String?
+}
+
+enum Tipo_usuarios {
+  gestor
+  secretaria
+  vendedor
+}
+
+enum Tipo_clientes {
+  PF
+  PJ
+}
