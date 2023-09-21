@@ -11,21 +11,22 @@ datasource db {
 }
 
 model Usuarios {
-  id       Int           @id @default(autoincrement())
+  id       Int             @id @default(autoincrement())
   nome     String
-  email    String        @unique
+  email    String          @unique
   senha    String
-  telefone String        @unique
+  telefone String          @unique
   tipo     Tipo_usuarios
   leads    Leads[]
+  produtos UsuariosLeads[]
 }
 
 model Produtos {
-  id           Int     @id @default(autoincrement())
-  produtos     String  @unique
-  categoria    String
-  preco_tabela Float
-  leads        Leads[]
+  id            Int             @id @default(autoincrement())
+  produtos      String          @unique
+  categoria     String
+  preco_tabela  Float
+  leads         Leads[]
 }
 
 model Clientes {
@@ -50,15 +51,26 @@ model Enderecos {
 }
 
 model Leads {
-  usuario        Usuarios?    @relation(fields: [usuarioId], references: [id])
-  usuarioId      Int          @unique
-  cliente        Clientes?    @relation(fields: [clienteId], references: [id])
-  clienteId      Int          @unique
-  produto        Produtos?    @relation(fields: [produtoId], references: [id])
-  produtoId      Int          @unique
+  usuario        Usuarios?       @relation(fields: [usuarioId], references: [id])
+  usuarioId      Int             @unique
+  cliente        Clientes?       @relation(fields: [clienteId], references: [id])
+  clienteId      Int             @unique
+  produto        Produtos?       @relation(fields: [produtoId], references: [id])
+  produtoId      Int             @unique
   observasoes    String[]
-  status         Status_leads @relation(fields: [status_leadsId], references: [id])
+  status         Status_leads    @relation(fields: [status_leadsId], references: [id])
   status_leadsId Int
+  compartilhar   Boolean         @default(false)
+  usuarios       UsuariosLeads[]
+  lembrete       String[]
+}
+
+model UsuariosLeads {
+  id             Int      @id @default(autoincrement())
+  usuario        Usuarios @relation(fields: [usuarioId], references: [id])
+  usuarioId      Int
+  Leads          Leads?   @relation(fields: [leadsUsuarioId], references: [usuarioId])
+  leadsUsuarioId Int?
 }
 
 model Status_leads {
