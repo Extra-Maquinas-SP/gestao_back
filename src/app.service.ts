@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getAppStatus(baseUrl: string) {
+    return {
+      status: 'Gestão Back Api is running! 🚀',
+      docs: baseUrl + '/api',
+    };
   }
 }
