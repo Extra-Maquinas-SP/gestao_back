@@ -19,7 +19,7 @@ export class CreateUsuarioService {
 
     data.senha = crypto.randomBytes(32).toString('hex');
 
-    const newusuario = await usuarioRepository.createusuario(data);
+    const newusuario = await usuarioRepository.createUsuario(data);
 
     return newusuario;
   }

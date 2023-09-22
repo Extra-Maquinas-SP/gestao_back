@@ -17,12 +17,25 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 // import { Loggedusuario } from '../auth/decorator/logged-usuario.decorator';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { Usuario } from './entities/usuario.entity';
-import { CreateUsuarioService } from './services';
+import {
+  CreateUsuarioService,
+  FindAllUsuariosService,
+  FindOneUsuarioService,
+  UpdateUsuarioService,
+  DeleteUsuarioService,
+} from './services';
+import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 
 @ApiTags('Usuario')
 @Controller('usuario')
 export class UsuarioController {
-  constructor(private createUsuarioService: CreateUsuarioService) {}
+  constructor(
+    private createUsuarioService: CreateUsuarioService,
+    private findAllUsuariosService: FindAllUsuariosService,
+    private findOneUsuarioService: FindOneUsuarioService,
+    private updateUsuarioService: UpdateUsuarioService,
+    private deleteUsuarioService: DeleteUsuarioService,
+  ) {}
 
   @Post('create')
   //   @UseGuards(AuthGuard())
@@ -34,28 +47,28 @@ export class UsuarioController {
     return this.createUsuarioService.execute(createUsuarioDto);
   }
 
-  //   @Get('all')
-  //   @UseGuards(AuthGuard())
-  //   @ApiBearerAuth()
-  //   @ApiOperation({
-  //     summary: 'List all usuarios - (FOR ADMIN).',
-  //   })
-  //   findAll(@LoggedAdmin() usuario: usuario, @Query() query: PageOptionsDto) {
-  //     return this.findAllusuariosServices.execute(query);
-  //   }
+  @Get('all')
+  // @UseGuards(AuthGuard())
+  // @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Lista de usuarios - (SOMENTE GESTOR).',
+  })
+  findAll() {
+    return this.findAllUsuariosService.execute();
+  }
 
-  //   @Get('search/:usuarioID')
-  //   @UseGuards(AuthGuard())
-  //   @ApiBearerAuth()
-  //   @ApiOperation({
-  //     summary: 'View a usuario by Id - (FOR ADMIN).',
-  //   })
-  //   findOneusuario(
-  //     @LoggedAdmin() usuario: usuario,
-  //     @Param('usuarioID') usuarioId: number,
-  //   ) {
-  //     return this.findOneusuarioService.execute(usuarioId);
-  //   }
+  @Get('search/:usuarioID')
+  // @UseGuards(AuthGuard())
+  // @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Vizualizar usuario pelo Id - (ABERTO).',
+  })
+  findOneUsuario(
+    // @LoggedAdmin() usuario: usuario,
+    @Param('usuarioID') usuarioId: number,
+  ) {
+    return this.findOneUsuarioService.execute(usuarioId);
+  }
 
   //   @Post('/search')
   //   @UseGuards(AuthGuard())
@@ -72,19 +85,19 @@ export class UsuarioController {
   //     return this.searchusuariosService.execute(query, searchusuarioDto);
   //   }
 
-  //   @Patch('update/:usuarioID')
-  //   @UseGuards(AuthGuard())
-  //   @ApiBearerAuth()
-  //   @ApiOperation({
-  //     summary: 'Edit a usuario by Id - (FOR ADMIN).',
-  //   })
-  //   updateusuario(
-  //     @LoggedAdmin() usuario: usuario,
-  //     @Param('usuarioID') usuarioId: number,
-  //     @Body() updateusuarioDto: UpdateusuarioDto,
-  //   ): Promise<usuario> {
-  //     return this.updateusuarioService.execute(usuarioId, updateusuarioDto);
-  //   }
+  @Patch('update/:usuarioID')
+  // @UseGuards(AuthGuard())
+  // @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Editar usuario pelo Id - (ABERTO).',
+  })
+  updateUsuario(
+    // @LoggedAdmin() usuario: usuario,
+    @Param('usuarioID') usuarioId: number,
+    @Body() updateUsuarioDto: UpdateUsuarioDto,
+  ): Promise<Usuario> {
+    return this.updateUsuarioService.execute(usuarioId, updateUsuarioDto);
+  }
 
   //   @Patch('update-my-account')
   //   @UseGuards(AuthGuard())
@@ -99,27 +112,17 @@ export class UsuarioController {
   //     return this.updateMyAccountService.execute(usuario.id, updateMyAccountDto);
   //   }
 
-  //   @Patch('update_password')
-  //   @ApiOperation({
-  //     summary: 'usuario update password- (FOR ALL usuarioS).',
-  //   })
-  //   updatePassword(
-  //     @Body() updatePassword: CreatePasswordHashDto,
-  //   ): Promise<usuario> {
-  //     return this.updatePasswordByEmailService.execute(updatePassword);
-  //   }
-
-  //   @Delete('delete/:usuarioID')
-  //   @UseGuards(AuthGuard())
-  //   @ApiBearerAuth()
-  //   @HttpCode(HttpStatus.NO_CONTENT)
-  //   @ApiOperation({
-  //     summary: 'Remove a usuario by Id - (FOR ADMIN).',
-  //   })
-  //   deleteusuario(
-  //     @LoggedAdmin() usuario: usuario,
-  //     @Param('usuarioID') usuarioId: number,
-  //   ): Promise<object> {
-  //     return this.deleteusuarioService.execute(usuarioId);
-  //   }
+  @Delete('delete/:usuarioID')
+  // @UseGuards(AuthGuard())
+  // @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    summary: 'Deletar o usuario pelo Id - (SOMENTE GESTOR).',
+  })
+  deleteUsuario(
+    // @LoggedAdmin() usuario: usuario,
+    @Param('usuarioID') usuarioId: number,
+  ): Promise<object> {
+    return this.deleteUsuarioService.execute(usuarioId);
+  }
 }

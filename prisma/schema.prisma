@@ -67,6 +67,7 @@ model Enderecos {
 }
 
 model Leads {
+  id                      Int             @id @default(autoincrement())
   usuario                 Usuarios        @relation(fields: [usuarioId], references: [id])
   usuarioId               Int             @unique
   cliente                 Clientes        @relation(fields: [clienteId], references: [id])

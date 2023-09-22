@@ -1,4 +1,3 @@
-// import { NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { handleError } from '../../../shared/utils/handle-error.util';
 // import { PageOptionsDto } from '../../../shared/pagination-dtos';
@@ -7,6 +6,8 @@ import { handleError } from '../../../shared/utils/handle-error.util';
 // import { UpdateMyAccountDto } from '../dto/update-my-account.dto';
 import { Usuario } from '../entities/usuario.entity';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
+import { NotFoundException } from '@nestjs/common';
+import { UpdateUsuarioDto } from '../dto/update-usuario.dto';
 
 export class UsuarioRepository extends PrismaClient {
   private usuarioSelect = {
@@ -21,7 +22,7 @@ export class UsuarioRepository extends PrismaClient {
     created_at: true,
     updated_at: true,
   };
-  async createusuario(data: CreateUsuarioDto): Promise<Usuario> {
+  async createUsuario(data: CreateUsuarioDto): Promise<Usuario> {
     const newusuario = await this.usuarios
       .create({
         data: {
@@ -39,56 +40,43 @@ export class UsuarioRepository extends PrismaClient {
     return newusuario;
   }
 
-  //   async findAllusuarios({ skip, order, orderByColumn, take }: PageOptionsDto) {
-  //     const usuarios = await this.usuario
-  //       .findMany({
-  //         skip,
-  //         take,
-  //         orderBy: {
-  //           [orderByColumn]: order,
-  //         },
-  //         where: { deleted: false },
-  //         select: this.usuarioSelect,
-  //       })
-  //       .catch(handleError);
+  async findAllUsuarios() {
+    const usuarios = await this.usuarios
+      .findMany({ include: { leads: true, leads_compartilhadas: true } })
+      .catch(handleError);
 
-  //     if (usuarios.length === 0) {
-  //       throw new NotFoundException('No a usuarios found');
-  //     }
+    const usuariosComLeads = usuarios.map((usuario) => {
+      const { senha, ...dadosUsuarioSemSenha } = usuario;
 
-  //     return usuarios;
-  //   }
+      return {
+        ...dadosUsuarioSemSenha,
+      };
+    });
 
-  //   async getAllusuarios() {
-  //     return this.usuario
-  //       .findMany({
-  //         where: {
-  //           deleted: false,
-  //         },
-  //       })
-  //       .catch(handleError);
-  //   }
+    return usuariosComLeads;
+  }
 
-  //   async findOneusuario(usuarioId: number) {
-  //     const usuario = await this.usuario
-  //       .findFirst({
-  //         where: { id: usuarioId, deleted: false },
-  //         include: {
-  //           institutions: true,
-  //         },
-  //       })
-  //       .catch(handleError);
+  async findOneUsuario(usuarioId: number) {
+    const usuario = await this.usuarios
+      .findFirst({
+        where: { id: usuarioId },
+        include: {
+          leads: true,
+          leads_compartilhadas: true,
+        },
+      })
+      .catch(handleError);
 
-  //     if (!usuario) {
-  //       throw new NotFoundException(`usuario with Id '${usuarioId}' not found!`);
-  //     }
+    if (!usuario) {
+      throw new NotFoundException(
+        `Usuario com Id '${usuarioId}' não encontrado!`,
+      );
+    }
 
-  //     delete usuario.passwordHash;
+    delete usuario.senha;
 
-  //     delete usuario.deleted;
-
-  //     return usuario;
-  //   }
+    return usuario;
+  }
 
   async findOneByEmail(email: string): Promise<Usuario> {
     return this.usuarios.findFirst({
@@ -97,14 +85,6 @@ export class UsuarioRepository extends PrismaClient {
       },
     });
   }
-
-  //   async findByToken(token: string): Promise<usuario> {
-  //     return this.usuario.findFirst({
-  //       where: {
-  //         recoverPasswordToken: token,
-  //       },
-  //     });
-  //   }
 
   //   async searchusuarios(
   //     { skip, order, orderByColumn, take }: PageOptionsDto,
@@ -143,30 +123,27 @@ export class UsuarioRepository extends PrismaClient {
   //       .catch(handleError);
   //   }
 
-  //   async updateusuario(usuarioId: number, data: UpdateusuarioDto): Promise<usuario> {
-  //     await this.validationInstitutionExists(data);
+  async updateUsuario(
+    usuarioId: number,
+    data: UpdateUsuarioDto,
+  ): Promise<Usuario> {
+    const updatedUsuario = await this.usuarios
+      .update({
+        where: { id: usuarioId },
+        data: {
+          nome: data.nome,
+          email: data.email,
+          senha: data.senha,
+          telefone: data.telefone,
+          tipo: data.tipo,
+        },
+      })
+      .catch(handleError);
 
-  //     const updatedusuario = await this.usuario
-  //       .update({
-  //         where: { id: usuarioId },
-  //         data: {
-  //           name: data.name,
-  //           email: data.email,
-  //           role: data.role,
-  //           institutions: {
-  //             connect: data.institutions.map((id) => ({
-  //               id,
-  //             })),
-  //           },
-  //         },
-  //       })
-  //       .catch(handleError);
+    delete updatedUsuario.senha;
 
-  //     delete updatedusuario.passwordHash;
-  //     delete updatedusuario.deleted;
-
-  //     return updatedusuario;
-  //   }
+    return updatedUsuario;
+  }
 
   //   async updateMyAccount(usuarioId: number, { ...data }: UpdateMyAccountDto) {
   //     const updateMyAccount = await this.usuario
@@ -185,34 +162,15 @@ export class UsuarioRepository extends PrismaClient {
   //     return updateMyAccount;
   //   }
 
-  //   async updatePassword(id: number, passwordHash: string): Promise<usuario> {
-  //     const updatedusuario = await this.usuario.update({
-  //       where: {
-  //         id,
-  //       },
-  //       data: {
-  //         recoverPasswordToken: null,
-  //         passwordHash,
-  //       },
-  //     });
+  async deleteUsuario(usuarioId: number): Promise<object> {
+    await this.usuarios
+      .delete({
+        where: { id: usuarioId },
+      })
+      .catch(handleError);
 
-  //     delete updatedusuario.passwordHash;
-
-  //     return updatedusuario;
-  //   }
-
-  //   async deleteusuario(usuarioId: number): Promise<object> {
-  //     await this.usuario
-  //       .update({
-  //         where: { id: usuarioId },
-  //         data: {
-  //           deleted: true,
-  //         },
-  //       })
-  //       .catch(handleError);
-
-  //     return { message: 'usuario deleted successfully' };
-  //   }
+    return { message: 'Usuario deletado com sucesso.' };
+  }
 
   //   async validationInstitutionExists(data) {
   //     const institution = await this.institution.findFirst({
