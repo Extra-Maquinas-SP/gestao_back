@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { UsuarioRepository } from '../repository/usuario.repository';
 import { CreateUsuarioDto } from '../dto/create-usuario.dto';
 import { Usuario } from '../entities/usuario.entity';
@@ -17,7 +17,7 @@ export class CreateUsuarioService {
       throw new BadRequestException(`Usuario ${data.email} existe!`);
     }
 
-    data.senha = crypto.randomBytes(32).toString('hex');
+    data.senha = await bcrypt.hash(data.senha, 10)
 
     const newusuario = await usuarioRepository.createUsuario(data);
 
