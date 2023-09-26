@@ -11,22 +11,30 @@ datasource db {
 }
 
 model Usuarios {
-  id       Int             @id @default(autoincrement())
-  nome     String
-  email    String          @unique
-  senha    String
-  telefone String          @unique
-  tipo     Tipo_usuarios
-  leads    Leads[]
-  produtos UsuariosLeads[]
+  id                   Int             @id @default(autoincrement())
+  nome                 String
+  email                String          @unique
+  senha                String
+  telefone             String          @unique
+  tipo                 Tipo_usuarios
+  leads                Leads[]
+  leads_compartilhadas UsuariosLeads[]
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @default(now()) @updatedAt
+
+  @@map("usuarios")
 }
 
 model Produtos {
-  id            Int             @id @default(autoincrement())
-  produtos      String          @unique
-  categoria     String
-  preco_tabela  Float
-  leads         Leads[]
+  id           Int      @id @default(autoincrement())
+  produtos     String   @unique
+  categoria    String
+  preco_tabela Float
+  leads        Leads[]
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now()) @updatedAt
+
+  @@map("produtos")
 }
 
 model Clientes {
@@ -37,6 +45,10 @@ model Clientes {
   endereco   Enderecos     @relation(fields: [enderecoId], references: [id])
   enderecoId Int           @unique
   leads      Leads[]
+  created_at DateTime      @default(now())
+  updated_at DateTime      @default(now()) @updatedAt
+
+  @@map("clientes")
 }
 
 model Enderecos {
@@ -48,35 +60,52 @@ model Enderecos {
   numero      Int
   complemento String?
   cliente     Clientes?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now()) @updatedAt
+
+  @@map("enderecos")
 }
 
 model Leads {
-  usuario        Usuarios?       @relation(fields: [usuarioId], references: [id])
-  usuarioId      Int             @unique
-  cliente        Clientes?       @relation(fields: [clienteId], references: [id])
-  clienteId      Int             @unique
-  produto        Produtos?       @relation(fields: [produtoId], references: [id])
-  produtoId      Int             @unique
-  observasoes    String[]
-  status         Status_leads    @relation(fields: [status_leadsId], references: [id])
-  status_leadsId Int
-  compartilhar   Boolean         @default(false)
-  usuarios       UsuariosLeads[]
-  lembrete       String[]
+  id                      Int             @id @default(autoincrement())
+  usuario                 Usuarios        @relation(fields: [usuarioId], references: [id])
+  usuarioId               Int             @unique
+  cliente                 Clientes        @relation(fields: [clienteId], references: [id])
+  clienteId               Int             @unique
+  produto                 Produtos        @relation(fields: [produtoId], references: [id])
+  produtoId               Int             @unique
+  observasoes             String[]
+  status                  Status_leads    @relation(fields: [status_leadsId], references: [id])
+  status_leadsId          Int
+  compartilhar            Boolean         @default(false)
+  usuarios_compartilhados UsuariosLeads[]
+  lembrete                String[]
+  created_at              DateTime        @default(now())
+  updated_at              DateTime        @default(now()) @updatedAt
+
+  @@map("leads")
 }
 
 model UsuariosLeads {
   id             Int      @id @default(autoincrement())
   usuario        Usuarios @relation(fields: [usuarioId], references: [id])
   usuarioId      Int
-  Leads          Leads?   @relation(fields: [leadsUsuarioId], references: [usuarioId])
-  leadsUsuarioId Int?
+  Leads          Leads    @relation(fields: [leadsUsuarioId], references: [usuarioId])
+  leadsUsuarioId Int
+  created_at     DateTime @default(now())
+  updated_at     DateTime @default(now()) @updatedAt
+
+  @@map("usuarios_leads")
 }
 
 model Status_leads {
-  id     Int     @id @default(autoincrement())
-  leads  Leads[]
-  motivo String?
+  id         Int      @id @default(autoincrement())
+  leads      Leads[]
+  motivo     String?
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+
+  @@map("status_leads")
 }
 
 enum Tipo_usuarios {
