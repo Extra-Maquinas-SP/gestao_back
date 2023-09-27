@@ -53,6 +53,10 @@ export class UsuarioRepository extends PrismaClient {
       };
     });
 
+    if (usuariosComLeads.length == 0) {
+      throw new NotFoundException('Não há usuarios cadastrados!');
+    }
+
     return usuariosComLeads;
   }
 
