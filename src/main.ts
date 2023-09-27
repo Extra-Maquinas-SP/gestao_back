@@ -24,8 +24,9 @@ async function bootstrap() {
     .setDescription('')
     .setVersion('1.0.0')
     .addTag('Status')
-    .addTag('Usuario')
     .addTag('Auth')
+    .addTag('Usuario')
+    .addTag('Produto')
     .addBearerAuth()
     .build();
 

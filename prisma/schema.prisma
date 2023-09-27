@@ -27,7 +27,7 @@ model Usuarios {
 
 model Produtos {
   id           Int      @id @default(autoincrement())
-  produtos     String   @unique
+  produto      String   @unique
   categoria    String
   preco_tabela Float
   leads        Leads[]

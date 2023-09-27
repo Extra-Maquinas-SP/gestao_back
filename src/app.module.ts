@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UsuarioModule } from './modules/usuario/usuario.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ProdutoModule } from './modules/produto/produto.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     AuthModule,
     UsuarioModule,
+    ProdutoModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
