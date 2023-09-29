@@ -27,6 +27,7 @@ async function bootstrap() {
     .addTag('Auth')
     .addTag('Usuario')
     .addTag('Produto')
+    .addTag('Cliente')
     .addBearerAuth()
     .build();
 
