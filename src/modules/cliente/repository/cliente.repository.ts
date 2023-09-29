@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { CreateClienteDto } from '../dto/create-cliente.dto';
 import { Cliente } from '../entities/cliente.entity';
 import { handleError } from 'src/shared/utils/handle-error.util';
+import { NotFoundException } from '@nestjs/common';
 
 export class ClienteRepository extends PrismaClient {
   async createCliente(data: CreateClienteDto): Promise<Cliente> {
@@ -34,5 +35,19 @@ export class ClienteRepository extends PrismaClient {
         documento,
       },
     });
+  }
+
+  async findAllClientes(): Promise<Cliente[]> {
+    const clientes = await this.clientes.findMany({
+      include: {
+        leads: true,
+      },
+    });
+
+    if (clientes.length == 0) {
+      throw new NotFoundException('Não há clientes cadastrados!');
+    }
+
+    return clientes;
   }
 }

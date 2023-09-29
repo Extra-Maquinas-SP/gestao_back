@@ -42,7 +42,7 @@ model Clientes {
   nome       String
   tipo       Tipo_clientes
   documento  String
-  endereco   Enderecos     @relation(fields: [enderecoId], references: [id])
+  endereco   Enderecos     @relation(fields: [enderecoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   enderecoId Int           @unique
   leads      Leads[]
   created_at DateTime      @default(now())
@@ -68,14 +68,14 @@ model Enderecos {
 
 model Leads {
   id                      Int             @id @default(autoincrement())
-  usuario                 Usuarios        @relation(fields: [usuarioId], references: [id])
+  usuario                 Usuarios        @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   usuarioId               Int             @unique
-  cliente                 Clientes        @relation(fields: [clienteId], references: [id])
+  cliente                 Clientes        @relation(fields: [clienteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   clienteId               Int             @unique
-  produto                 Produtos        @relation(fields: [produtoId], references: [id])
+  produto                 Produtos        @relation(fields: [produtoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   produtoId               Int             @unique
   observasoes             String[]
-  status                  Status_leads    @relation(fields: [status_leadsId], references: [id])
+  status                  Status_leads    @relation(fields: [status_leadsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   status_leadsId          Int
   compartilhar            Boolean         @default(false)
   usuarios_compartilhados UsuariosLeads[]
@@ -88,9 +88,9 @@ model Leads {
 
 model UsuariosLeads {
   id             Int      @id @default(autoincrement())
-  usuario        Usuarios @relation(fields: [usuarioId], references: [id])
+  usuario        Usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   usuarioId      Int
-  Leads          Leads    @relation(fields: [leadsUsuarioId], references: [usuarioId])
+  Leads          Leads    @relation(fields: [leadsUsuarioId], references: [usuarioId], onDelete: Cascade, onUpdate: Cascade)
   leadsUsuarioId Int
   created_at     DateTime @default(now())
   updated_at     DateTime @default(now()) @updatedAt
