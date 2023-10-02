@@ -8,6 +8,7 @@ import {
   FindAllLeadsByUsuarioService,
   FindAllLeadsCompartilhadasByUsuarioService,
   FindAllLeadsService,
+  FindOneLeadService,
   UpdateStatusLeadsService,
 } from './services';
 
@@ -19,6 +20,7 @@ import {
     CreateLeadsService,
     FindAllLeadsService,
     FindAllLeadsByUsuarioService,
+    FindOneLeadService,
     UpdateStatusLeadsService,
     CompartilharLeadsService,
     FindAllLeadsCompartilhadasByUsuarioService,

@@ -56,6 +56,28 @@ export class LeadsRepository extends PrismaClient {
     return leads;
   }
 
+  async findOneLead(leadsId: number): Promise<Leads> {
+    const lead = await this.leads
+      .findFirst({
+        where: {
+          id: leadsId,
+        },
+        include: {
+          usuario: true,
+          cliente: true,
+          produto: true,
+          status: true,
+        }
+      })
+      .catch(handleError);
+
+    if (!lead) {
+      throw new NotFoundException('Leads não encontrada!');
+    }
+
+    return lead;
+  }
+
   async findAllLeadsByUsuario(usuarioId: number): Promise<Leads[]> {
     const leads = await this.leads
       .findMany({
@@ -87,6 +109,10 @@ export class LeadsRepository extends PrismaClient {
         id: data.leadsId,
       },
     });
+
+    if (!lead) {
+      throw new NotFoundException('Leads não encontrada!');
+    }
 
     const leadsCompartilhada = await this.usuariosLeads.findFirst({
       where: {
@@ -127,6 +153,10 @@ export class LeadsRepository extends PrismaClient {
         id: data.leadsId,
       },
     });
+
+    if (!lead) {
+      throw new NotFoundException('Leads não encontrada!');
+    }
 
     if (lead.usuarioId !== usuarioId) {
       throw new NotFoundException('Usuario não é proprietario desta lead!');

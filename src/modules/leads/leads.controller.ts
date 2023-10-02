@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { LoggedUsuario } from '../auth/decorator/logged-usuario.decorator';
@@ -11,6 +19,7 @@ import {
   FindAllLeadsByUsuarioService,
   FindAllLeadsCompartilhadasByUsuarioService,
   FindAllLeadsService,
+  FindOneLeadService,
   UpdateStatusLeadsService,
 } from './services';
 import { LoggedAdmin } from '../auth/decorator/logged-admin.decorator';
@@ -24,6 +33,7 @@ export class LeadsController {
     private createLeadsService: CreateLeadsService,
     private findAllLeadsService: FindAllLeadsService,
     private findAllLeadsByUsuarioService: FindAllLeadsByUsuarioService,
+    private findOneLeadService: FindOneLeadService,
     private updateStatusLeadsService: UpdateStatusLeadsService,
     private compartilharLeadsService: CompartilharLeadsService,
     private findAllLeadsCompartilhadasByUsuarioService: FindAllLeadsCompartilhadasByUsuarioService,
@@ -60,6 +70,19 @@ export class LeadsController {
   })
   findAllLeadsByUsuario(@LoggedUsuario() usuario: Usuario): Promise<Leads[]> {
     return this.findAllLeadsByUsuarioService.execute(usuario.id);
+  }
+
+  @Get('search/:leadsId')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Vizualizar leads pelo Id - (ABERTO).',
+  })
+  findOneLeads(
+    @Param('leadsId') leadsId: number,
+    @LoggedUsuario() usuario: Usuario,
+  ): Promise<Leads> {
+    return this.findOneLeadService.execute(leadsId);
   }
 
   @Patch('update-status-leads')
