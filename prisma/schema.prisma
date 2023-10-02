@@ -69,11 +69,11 @@ model Enderecos {
 model Leads {
   id                      Int             @id @default(autoincrement())
   usuario                 Usuarios        @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  usuarioId               Int             @unique
+  usuarioId               Int
   cliente                 Clientes        @relation(fields: [clienteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  clienteId               Int             @unique
+  clienteId               Int
   produto                 Produtos        @relation(fields: [produtoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  produtoId               Int             @unique
+  produtoId               Int
   observasoes             String[]
   status                  Status_leads    @relation(fields: [status_leadsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   status_leadsId          Int
@@ -87,13 +87,13 @@ model Leads {
 }
 
 model UsuariosLeads {
-  id             Int      @id @default(autoincrement())
-  usuario        Usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  usuarioId      Int
-  Leads          Leads    @relation(fields: [leadsUsuarioId], references: [usuarioId], onDelete: Cascade, onUpdate: Cascade)
-  leadsUsuarioId Int
-  created_at     DateTime @default(now())
-  updated_at     DateTime @default(now()) @updatedAt
+  id         Int      @id @default(autoincrement())
+  usuario    Usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  usuarioId  Int
+  Leads      Leads    @relation(fields: [leadsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  leadsId    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 
   @@map("usuarios_leads")
 }

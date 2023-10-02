@@ -5,7 +5,10 @@ export class CompartilharLeadsService {
   async execute(usuarioId: number, data: CompartilharLeadsDto) {
     const leadsRepository = new LeadsRepository();
 
-    const leadsCompartilhada = await leadsRepository.compartilharLeads(usuarioId, data);
+    const leadsCompartilhada = await leadsRepository.compartilharLeads(
+      usuarioId,
+      data,
+    );
 
     return leadsCompartilhada;
   }

@@ -11,9 +11,11 @@ import {
   FindAllLeadsByUsuarioService,
   FindAllLeadsCompartilhadasByUsuarioService,
   FindAllLeadsService,
+  UpdateStatusLeadsService,
 } from './services';
 import { LoggedAdmin } from '../auth/decorator/logged-admin.decorator';
 import { CompartilharLeadsDto } from './dto/compartilhar-leads.dto';
+import { UpdateStatusLeadsDto } from './dto/update-status-leads.dto';
 
 @ApiTags('Leads')
 @Controller('leads')
@@ -22,6 +24,7 @@ export class LeadsController {
     private createLeadsService: CreateLeadsService,
     private findAllLeadsService: FindAllLeadsService,
     private findAllLeadsByUsuarioService: FindAllLeadsByUsuarioService,
+    private updateStatusLeadsService: UpdateStatusLeadsService,
     private compartilharLeadsService: CompartilharLeadsService,
     private findAllLeadsCompartilhadasByUsuarioService: FindAllLeadsCompartilhadasByUsuarioService,
   ) {}
@@ -57,6 +60,22 @@ export class LeadsController {
   })
   findAllLeadsByUsuario(@LoggedUsuario() usuario: Usuario): Promise<Leads[]> {
     return this.findAllLeadsByUsuarioService.execute(usuario.id);
+  }
+
+  @Patch('update-status-leads')
+  @UseGuards(AuthGuard())
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Atualizar o status da leads - (ABERTO).',
+  })
+  updateStatusLeads(
+    @LoggedUsuario() usuario: Usuario,
+    @Body() updateStatusLeadsDto: UpdateStatusLeadsDto,
+  ): Promise<Leads> {
+    return this.updateStatusLeadsService.execute(
+      usuario.id,
+      updateStatusLeadsDto,
+    );
   }
 
   @Patch('compartilhar-leads')

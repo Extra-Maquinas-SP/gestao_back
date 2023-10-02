@@ -8,6 +8,7 @@ import {
   FindAllLeadsByUsuarioService,
   FindAllLeadsCompartilhadasByUsuarioService,
   FindAllLeadsService,
+  UpdateStatusLeadsService,
 } from './services';
 
 @Module({
@@ -18,6 +19,7 @@ import {
     CreateLeadsService,
     FindAllLeadsService,
     FindAllLeadsByUsuarioService,
+    UpdateStatusLeadsService,
     CompartilharLeadsService,
     FindAllLeadsCompartilhadasByUsuarioService,
   ],
