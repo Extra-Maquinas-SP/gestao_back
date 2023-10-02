@@ -7,6 +7,7 @@ import { UsuarioModule } from './modules/usuario/usuario.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProdutoModule } from './modules/produto/produto.module';
 import { ClienteModule } from './modules/cliente/cliente.module';
+import { LeadsModule } from './modules/leads/leads.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ClienteModule } from './modules/cliente/cliente.module';
     UsuarioModule,
     ProdutoModule,
     ClienteModule,
+    LeadsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

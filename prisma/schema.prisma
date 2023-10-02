@@ -100,6 +100,7 @@ model UsuariosLeads {
 
 model Status_leads {
   id         Int      @id @default(autoincrement())
+  status     String
   leads      Leads[]
   motivo     String?
   created_at DateTime @default(now())
